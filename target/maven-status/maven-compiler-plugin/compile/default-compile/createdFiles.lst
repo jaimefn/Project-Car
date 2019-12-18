@@ -1,0 +1,7 @@
+project/car/repository/CarRepository.class
+project/car/SwaggerConfig.class
+project/car/dto/CarroDTO.class
+entity/Carro.class
+project/car/App.class
+project/car/rest/CarController.class
+project/car/service/CarServices.class
