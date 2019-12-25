@@ -1,10 +1,15 @@
 package project.car.service;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.management.RuntimeErrorException;
 
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,36 +25,37 @@ import project.car.repository.CarRepository;
 public class CarServices {
 
 	@Autowired
-	private CarRepository carRepository; 
-	
-	
+	private CarRepository carRepository;
+
 	public CarServices() {
-		
-	}
-	
-	public List<CarroDTO> getAllCars() {
-				
-		return carRepository.findAll().stream().map(CarroDTO::new).collect(Collectors.toList());
-	}
-	
-	public Optional<CarroDTO> getCarById(Long id) {
-		
-		return carRepository.findById(id).map(CarroDTO::new);
-	}
-	
-	public void deleteCarById(Long id) {
-		carRepository.deleteById(id);
-	}
-	
-	public Optional<CarroDTO> saveCar(Carro car) {
-		return Optional.ofNullable(carRepository.save(car)).map(CarroDTO::new);
+
 	}
 
-	public Optional<CarroDTO> updateCarById(Carro car) {
-		return Optional.ofNullable(carRepository.save(car)).map(CarroDTO::new);
+	public List<CarroDTO> getAllCars() throws IOException {
+
+		return carRepository.findAll().stream().map(CarroDTO::create).collect(Collectors.toList());
+	}
+
+	public Optional<CarroDTO> getCarById(Long id) throws IOException {
+
+		return carRepository.findById(id).map(CarroDTO::create);
+	}
+
+	public void deleteCarById(Long id) throws IOException {
+		carRepository.deleteById(id);
+	}
+
+	public Optional<CarroDTO> saveCar(Carro car) throws IOException {
+		if(Objects.nonNull(car.getId())) throw new IOException("Id deve ser nulo");
+		return Optional.ofNullable(carRepository.save(car)).map(CarroDTO::create);
+	}
+
+	public Optional<CarroDTO> updateCarById(Carro car)throws IOException {
+		if(Objects.isNull(car.getId())) throw new IOException("Id não pode ser nulo");
+		return Optional.ofNullable(carRepository.save(car)).map(CarroDTO::create);
 	}
 
 	public List<CarroDTO> getCarByTipo(String tipo) {
-		return carRepository.findByTipo(tipo).stream().map(CarroDTO::new).collect(Collectors.toList());
+		return carRepository.findByTipo(tipo).stream().map(CarroDTO::create).collect(Collectors.toList());
 	}
 }
